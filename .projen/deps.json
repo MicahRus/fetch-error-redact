@@ -6,7 +6,7 @@
     },
     {
       "name": "@types/node",
-      "version": "^18",
+      "version": "^20",
       "type": "build"
     },
     {
@@ -26,6 +26,10 @@
     },
     {
       "name": "eslint-import-resolver-typescript",
+      "type": "build"
+    },
+    {
+      "name": "eslint-plugin-check-file",
       "type": "build"
     },
     {
@@ -51,11 +55,20 @@
       "type": "build"
     },
     {
+      "name": "standard-version",
+      "version": "^9",
+      "type": "build"
+    },
+    {
       "name": "ts-jest",
       "type": "build"
     },
     {
       "name": "ts-node",
+      "type": "build"
+    },
+    {
+      "name": "typedoc",
       "type": "build"
     },
     {
