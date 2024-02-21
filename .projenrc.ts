@@ -7,7 +7,7 @@ const nodeVersion = '20.9.0'
 const project = new typescript.TypeScriptAppProject({
   defaultReleaseBranch: 'main',
   name: 'fetch-error-redact',
-  description: '',
+  description: 'Library to redact sensitive information from Fetch errors. This can be used as an response interceptor for fetch instances, or can be used standalone.',
   projenrcTs: true,
   packageManager: NodePackageManager.PNPM,
   minNodeVersion: nodeVersion,

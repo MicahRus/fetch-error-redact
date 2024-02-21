@@ -1,6 +1,6 @@
 import {TextFile, javascript, typescript} from 'projen'
 
-const additionalEslintRules = {
+export const eslintRules = {
   'curly': [
     'error',
     'multi',
@@ -29,28 +29,28 @@ const additionalEslintRules = {
       'stack*/**/': 'CAMEL_CASE',
     },
   ],
-  'overrides': [
-    {
-      files: [
-        '.projenrc.ts',
-        './projects/helpers.ts',
-      ],
-      rules: {
-        'import/no-extraneous-dependencies': 'off',
-      },
-    },
+}
+
+const eslintOverrides = {
+  files: [
+    './projects/helpers.ts',
   ],
+  rules: {
+    'import/no-extraneous-dependencies': 'off',
+  },
 }
 
 const eslintOptions = {
-  rules: additionalEslintRules,
+  rules: eslintRules,
   plugins: ['check-file'],
   packages: ['eslint-plugin-check-file'],
+  overrides: eslintOverrides,
 }
 
 export function addEslint(project: typescript.TypeScriptProject): void {
   project.addDevDeps(...eslintOptions.packages)
   project.eslint?.addRules(eslintOptions.rules)
+  project.eslint?.addOverride(eslintOptions.overrides)
   project.eslint?.addPlugins(...eslintOptions.plugins)
 }
 

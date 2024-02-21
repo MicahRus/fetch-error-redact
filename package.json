@@ -1,6 +1,10 @@
 {
   "name": "fetch-error-redact",
-  "description": "",
+  "description": "Library to redact sensitive information from Fetch errors. This can be used as an response interceptor for fetch instances, or can be used standalone.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MicahRus/fetch-error-redact"
+  },
   "scripts": {
     "build": "npx projen build",
     "bump": "npx projen bump",
@@ -23,6 +27,10 @@
     "upgrade": "npx projen upgrade",
     "watch": "npx projen watch",
     "projen": "npx projen"
+  },
+  "author": {
+    "name": "Micah Rus",
+    "organization": false
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

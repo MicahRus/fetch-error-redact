@@ -238,20 +238,17 @@
         "test*/**/": "CAMEL_CASE",
         "stack*/**/": "CAMEL_CASE"
       }
-    ],
-    "overrides": [
-      {
-        "files": [
-          ".projenrc.ts",
-          "./projects/helpers.ts"
-        ],
-        "rules": {
-          "import/no-extraneous-dependencies": "off"
-        }
-      }
     ]
   },
   "overrides": [
+    {
+      "files": [
+        "./projects/helpers.ts"
+      ],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    },
     {
       "files": [
         ".projenrc.ts"
