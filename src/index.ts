@@ -1,50 +1,64 @@
-import { HttpErrorResponse } from "./types"
+import {redactData} from './helpers'
+import {HttpErrorResponse, RedactorConfig} from './types'
 
 export const redactedKeyword = '<REDACTED>'
-
 const queryParamsRegex = /(?<=\?|#)\S+/ig
-const pathParamsRegex = /(\?|#)\S+/ig
 
 export class FetchRedactor {
-  redactRequestData: boolean
-  redactResponseData: boolean
-  redactQueryData: boolean
+  private redactRequestData: boolean
+  private redactResponseData: boolean
+  private redactQueryData: boolean
 
-  constructor(redactRequestData = true, redactResponseData = true, redactQueryData = true) {
-    this.redactQueryData = redactQueryData
-    this.redactRequestData = redactRequestData
-    this.redactResponseData = redactResponseData
+  constructor(config?: RedactorConfig) {
+    this.redactQueryData = config?.redactQueryData ?? true
+    this.redactRequestData = config?.redactRequestData ?? true
+    this.redactResponseData = config?.redactResponseData ?? true
   }
 
-    private redactUrlQueryParams(url: string | undefined): string {
+  skipRequestData(): FetchRedactor {
+    this.redactRequestData = false
+    return this
+  }
+
+  skipResponseData(): FetchRedactor {
+    this.redactResponseData = false
+    return this
+  }
+
+  skipQueryData(): FetchRedactor {
+    this.redactQueryData = false
+    return this
+  }
+
+  private redactUrlQueryParams(url: string | undefined): string {
+    console.log('urlasdfas:', url) // TODO: Delete
     if (!url)
       return ''
 
     return this.redactQueryData ? url.replace(queryParamsRegex, redactedKeyword) : url
   }
 
-  private redactError(error: AxiosError | null | undefined): (HttpErrorResponse | null | undefined | Error) {
-    if (!error || !error.isAxiosError)
-      return error
+  async redactError(fetchResponse: Response, fetchRequest?: Request): Promise<HttpErrorResponse> {
+    const url = new URL(fetchResponse.url)
+    const fetchResponseBody = fetchResponse.ok ? await fetchResponse.clone().json() : ''
+    const redactedResponseData = redactData(fetchResponseBody, this.redactResponseData)
 
-    const baseURL = this.redactUrlQueryParams(error.config?.baseURL)
-    const path = this.redactUrlQueryParams(error.config?.url)
-    const queryPath = extractQueryPath(path) ? '' : extractQueryPath(error.request?.path)
-    const fullURL = this.redactUrlQueryParams(joinURL(baseURL, path, queryPath))
+    const fetchRequestBody = fetchResponse.ok ? await fetchRequest?.clone().json() : ''
+    const redactedRequestData = redactData(fetchRequestBody, this.redactRequestData)
 
+    const redactedUrl = this.redactUrlQueryParams(url.href)
     return {
-      fullURL,
-      message: error.message,
+      fullURL: redactedUrl,
       response: {
-        statusCode: error.response?.status,
-        statusMessage: error.response?.statusText || '',
-        data: redactData(error.response?.data, this.redactResponseData),
+        statusCode: fetchResponse.status,
+        statusText: fetchResponse.statusText || '',
+        data: redactedResponseData,
       },
       request: {
-        baseURL,
-        path,
-        method: error.config?.method || '',
-        data: redactData(error.config?.data, this.redactRequestData),
+        baseUri: url.host,
+        path: this.redactUrlQueryParams(url.pathname),
+        method: fetchRequest?.method ?? '',
+        data: redactedRequestData ?? '',
       },
     }
   }

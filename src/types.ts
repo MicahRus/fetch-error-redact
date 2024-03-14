@@ -1,15 +1,20 @@
 export interface HttpErrorResponse {
-  message: string;
   fullURL: string;
   response: {
     statusCode?: number;
-    statusMessage: string;
+    statusText: string;
     data: any;
   };
   request: {
-    baseURL: string;
+    baseUri: string;
     path: string;
     method: string;
     data: any;
   };
+}
+
+export interface RedactorConfig {
+  redactRequestData: boolean;
+  redactResponseData: boolean;
+  redactQueryData: boolean;
 }
